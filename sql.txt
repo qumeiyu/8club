@@ -1,0 +1,50 @@
+SELECT dvr.task_type,count(1)
+,IFNULL(sum(if(0=dvr.task_type,1,0)),0)
+,IFNULL(sum(if(1=dvr.task_type,1,0)),0)
+,IFNULL(sum(if(3=dvr.task_type,1,0)),0) 
+from d_vehicle_record dvr
+where (dvr.task_status=3 or dvr.task_status=4 or dvr.task_status=5)
+and dvr.end_date < 
+and dvr.end_date >
+
+
+
+{"xAxis":{"show":false,"type":"category","data":["1日","2日","3日","4日","5日"]},"yAxis":[{"type":"value","axisLabel":{"show":true,"formatter":"{value} "}}],"series":[{"yAxisIndex":0,"name":"","type":"bar","data":[1,2,3,4,5],"itemStyle":{"normal":{"label":{"show":true,"formatter":"{c}"}},"emphasis":{"label":{"show":true,"formatter":"{c}"}}}}],"color":["#4F81BD"]}
+
+
+
+
+法制办统计sql
+
+
+SELECT
+	da.id,
+	da.areaName,
+	COUNT(dcr.id) a2,
+	aa.a1
+FROM
+	d_area da
+LEFT JOIN sys_org_info soi ON soi.areaId = da.id
+LEFT JOIN d_case_report dcr ON dcr.caseOrgId = soi.id
+AND dcr.caseDate >= '2017-05-01 00:00:00'
+AND dcr.caseDate <= '2017-08-23 23:59:59'
+LEFT JOIN (
+	SELECT
+		da.id,
+		da.areaName,
+		COUNT(dos.id) a1
+	FROM
+		d_area da
+	LEFT JOIN sys_org_info soi ON soi.areaId = da.id
+	LEFT JOIN d_ombudsman_sb dos ON dos.employerId = soi.id
+	AND dos.sbDate >= '2017-05-01 00:00:00'
+	AND dos.sbDate <= '2017-08-23 23:59:59'
+	WHERE
+		da.id LIKE '22%'
+	GROUP BY
+		substring(da.id, 1, 4)
+) AS aa ON aa.id = da.id
+WHERE
+	da.id LIKE '22%'
+GROUP BY
+	substring(da.id, 1, 4)
