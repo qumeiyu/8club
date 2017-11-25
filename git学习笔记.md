@@ -54,5 +54,107 @@ $ git config --global user.email "email@example.com"
 > 查看是否已经有ssh秘钥 cd ~/.ssh<br>
 > $ ssh-keygen -t rsa -C “873082926@qq.com”  生成秘钥<br>
 > .ssh文件中得到了两个文件：id_rsa和id_rsa.pub，其中id_rsa.pub就是我们要使用的那个复制里面的全部内容，粘贴到github获取自己的git服务器ssh_key指定位置.<br>
+- 添加远程库
+> 本地创建一个git仓库，又想在github创建一个git仓库，并且将这两个仓库进行远程同步。<br>
 
+> 1、登陆github，然后在右上角找到create a new repo,创建一个新的仓库。<br>
+> 2、在本地仓库下运行命令：
+>> $git remote add origin git@github.com:qumeiyu/learngit.git<br>
+
+>3、把本地库上的东西推送上去
+>> $git push -u origin master
+
+> 4、今后再推送就可以直接用 $git push origin master<br>
+> 注意：第一次使用git的clone或push命令会有一个警告。第一次验证github服务的key时，需要确认github的key的指纹信息，输入yes回车即可。
+- 从远程库克隆
+> 先创建一个远程库，然后从远程库克隆
+
+> 1、登录github，创建一个新的仓库，勾选initialize this repository with a readme,这样github会自动创建一个readme.md文件。<br>
+> 2、在本地命令
+>> $git clone https://github.com/qumeiyu/8club.git
+# 4、分支管理
+> 你创建了一个属于你自己的分支，别人看不到，还继续在原来的分支上正常工作，而你在自己的分支上干活，想提交就提交，直到开发完毕后，再一次性合并到原来的分支上，这样，既安全，又不影响别人工作。
+- 创建与合并分支
+>主分支 master<br>
+> 1、创建dev分支，然后切换到dev分支：
+>> $ git checkout -b dev<br>
+>> 相当于$ git branch dev 和 $git checkout dev 两条命令
+
+> 2、用 $git branch命令查看当前分支
+>> git branch命令会列出所有分支，当前分支前面会标一个*
+
+> 3、然后就可以正常提交到分支dev上<br>
+> 4、切换回master分支 $git checkout master<br>
+> 5、把dev分支合并到master分支上 $git merge dev
+>> git merge命令是合并指定分支到当前分支
+
+> 6、合并后 删除dev分支 $git branch -d dev<br>
+> 7、查看branch中的分支 $git branch<br>
+> 8、总结：
+>> 查看分支：git branch  <br>
+   创建分支：git branch <name>  <br>
+   切换分支：git checkout <name>  <br>
+   创建+切换分支：git checkout -b <name>  <br>
+   合并某分支到当前分支：git merge <name>  <br>
+   删除分支：git branch -d <name>  <br>
+# 5、解决冲突
+> 1、创建一个新的分支
+>> $git checkout -b featurel
+
+> 2、在featurel分支上提交
+>> $git add readme.txt <br>
+   $git commit -m "and simple"
+
+> 3、切换到master分支、会自动提示当前master分支比远程的master分支要超前1个提交
+>> $git checkout master
+
+> 4、在master分支上把readme.txt文件的最后一行改了并提交，现在master分支和featurel分支各自都分别有新的提交。<br>
+> 5、这种情况下，Git无法执行“快速合并”，只能试图把各自的修改合并起来，但这种合并就可能会有冲突
+>> $ git merge feature1 <br>
+    Auto-merging readme.txt<br>
+    CONFLICT (content): Merge conflict in readme.txt<br>
+    Automatic merge failed; fix conflicts and then commit the result.
+
+> 6、git status 查看冲突文件，修改文件后再提交<br>
+> 7、git log可以看到分支合并情况<br>
+> 8、删除featurel分支<br>
+> 9、$git log --graph 命令可以查看分支合并图
+- 分支管理策略
+> 合并分支时，git会用fast forword模式，删除分支后，会丢掉分支信息。下面实现--no-ff方式的git merge<br>
+> 1、创建并切换dev分支<br>
+> 2、修改文件并提交一个新的commit<br>
+> 3、切换回到master分支<br>
+> 4、合并dev分支，注意--no-ff参数表示禁用fast forward
+>> $git merge --no-ff -m "merge with no-ff" dev
+
+> 5、查看分支历史
+>> $ git log --graph --pretty=oneline --abbrev-commit
+
+> 6、分支策略基本原则
+>> 首先，master分支应该是非常稳定的，也就是说仅用来发布版本，平时不能在上面干活；<br>
+   应该在dev分支上干活，到一定的时候，比如说版本发布时再把dev分支g合并到master上。<br>
+   合并分支时，加上--no-ff参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而fast forward合并就看不出来曾经做过合并。
+- bug分支
+> 当你接到一个修复一个代号101的bug的任务时，很自然地，你想创建一个分支issue-101来修复它，但是，等等，当前正在dev上进行的工作还没有提交<br>
+> 并不是你不想提交，而是工作只进行到一半，还没法提交，预计完成还需1天时间。但是，必须在两个小时内修复该bug，怎么办？幸好，Git还提供了一个stash功能，可以把当前工作现场“储藏”起来，等以后恢复现场后继续工作<br>
+> $git stash  查看工作区<br>
+> 创建分支修改bug，首先确定要在哪个分支上修复bug，假定需要在master分支上修复，就从master创建临时分支<br>
+>> $ git checkout master<br>
+   $ git checkout -b issue-101
+
+> 现在修复bug，需要把“Git is free software ...”改为“Git is a free software ...”，然后提交<br>
+> 修复完成后，切换到master分支，并完成合并，最后删除issue-101分支
+>> $ git checkout master<br>
+   $ git merge --no-ff -m "merged bug fix 101" issue-101<br>
+   $ git branch -d issue-101
+
+> 回到dev分支<br>
+>> $ git checkout dev<br>
+   $ git status
+
+> 工作区是干净的，刚才的工作现场存到哪去了？用git stash list命令查看。Git把stash内容存在某个地方了，但是需要恢复一下。<br>
+>> 一是用git stash apply恢复，但是恢复后，stash内容并不删除，你需要用git stash drop来删除<br>
+   另一种方式是用git stash pop，恢复的同时把stash内容也删了
+
+>再用git stash list查看，就看不到任何stash内容了
 
