@@ -97,7 +97,7 @@ $ git config --global user.email "email@example.com"
    创建+切换分支：git checkout -b <name>  <br>
    合并某分支到当前分支：git merge <name>  <br>
    删除分支：git branch -d <name>  <br>
-# 5、解决冲突
+- 5、解决冲突
 > 1、创建一个新的分支
 >> $git checkout -b featurel
 
@@ -157,4 +157,47 @@ $ git config --global user.email "email@example.com"
    另一种方式是用git stash pop，恢复的同时把stash内容也删了
 
 >再用git stash list查看，就看不到任何stash内容了
+- feature分支
+> 添加一个新功能最好新建一个Feature分支，完成后合并然后再删除feature分支
+> 1、新建一个分支
+>> $ git checkout -b feature-new
+
+> 2、切回原来的dev分支
+>> $ git checkout dev
+
+> 3、突然发现这个新功能不用了，销毁新建的分支
+>> $ git branch -d feature-new <br>
+>> 因为新分支还没有合并，所以销毁失败<br>
+>> 强行删除 $ git branch -D feature-new
+
+- 多人协作
+> 从远程仓库克隆时，就是git把本地的master分支和远程的master分支对应起来，远程仓库的默认名是origin.
+> 1、查看远程仓库信息
+>> $ git remote <br>
+>> $ git remote -v
+
+> 2、推送分支-将本地分支推送到远程库
+>> $ git push origin master <br>
+>> $ git push origin dev
+
+> 3、抓取分支
+>> 甲同学要在dev分支上开发，创建远程origin的dev分支到本地 <br>
+>> $ git checkout -b dev origin/dev  <br>
+>> 开发代码，将本地dev分支push到远程库，此时乙同学也对这个文件进行了修改，并试图推送 <br>
+>> 推送失败，因为甲乙两人的提交的代码冲突，可以先将远程库中最新的提交抓下来，然后在本地手动合并，再推送。<br>
+>> $ git pull <br>
+>> 推送失败，因为乙没有指定本地dev分支与远程origin/dev分支的链接。<br>
+>> $ git branch --set-upstream dev origin/dev <br>
+>> $ git pull <br>
+>> pull成功，但是合并有冲突，可以手动解决冲突，再push上去。<br>
+> 总结：首先，可以试图用git push origin branch-name推送自己的修改；<br>
+> 如果推送失败，则因为远程分支比你的本地更新，需要先用git pull试图合并；<br>
+> 如果合并有冲突，则解决冲突，并在本地提交；<br>
+> 没有冲突或者解决掉冲突后，再用git push origin branch-name推送就能成功！<br>
+> 如果git pull提示“no tracking information”，则说明本地分支和远程分支的链接关系没有创建，用命令git branch --set-upstream branch-name origin/branch-name。
+
+
+
+
+
 
