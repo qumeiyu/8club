@@ -214,7 +214,7 @@ $ git config --global user.email "email@example.com"
 >> $ sudo chown -R git:git sample.git
 
 > 7、禁用shell登录
->> 编辑/etc/passwd文件中的git:x:1001:1001:,,,:/home/git:/bin/bash改为git:x:1001:1001:,,,:/home/git:/usr/bin/git-shell
+>> 编辑/etc/passwd文件中的`git:x:1001:1001:,,,:/home/git:/bin/bash`改为`git:x:1001:1001:,,,:/home/git:/usr/bin/git-shell`
 
 >> 8、克隆远程仓库
 
