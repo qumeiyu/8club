@@ -198,6 +198,28 @@ $ git config --global user.email "email@example.com"
 > 如果git pull提示“no tracking information”，则说明本地分支和远程分支的链接关系没有创建，用命令 <br>
 > git branch --set-upstream branch-name origin/branch-name。
 
+# 5、搭建git服务
+> 1、一台运行Linux的机器,有sudo权限的用户账号
+> 2、安装git
+>> $ sudo apt-get install git 
+
+> 3、创建一个git用户,用来运行git服务
+>> $ sudo adduser git
+
+> 4、创建证书登录-收集登录用户的公钥，把所有公钥导入到/home/git/.ssh/authorized_keys文件里,一行一个
+> 5、初始化git仓库
+>> $ sudo git init --bare sample.git
+
+> 6、把owner改为git
+>> $ sudo chown -R git:git sample.git
+
+> 7、禁用shell登录
+>> 编辑/etc/passwd文件中的git:x:1001:1001:,,,:/home/git:/bin/bash改为git:x:1001:1001:,,,:/home/git:/usr/bin/git-shell
+
+>> 8、克隆远程仓库
+
+
+
 
 
 
